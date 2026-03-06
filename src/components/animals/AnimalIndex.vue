@@ -1,5 +1,6 @@
 <script setup>
 import AnimalCard from './AnimalCard.vue'
+import SearchBar from './SearchBar.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useAnimalsStore } from '@/stores/animals.store'
 
@@ -12,6 +13,10 @@ onMounted(async () => {
   }
 })
 
+const handleSearch = (query) => {
+    searchQuery.value = query
+}
+
 const filteredList = computed(() => {
   return animalStore.listAnimals.filter(animal => {
     return animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -21,19 +26,31 @@ const filteredList = computed(() => {
 
 <template>
   <div class="container">
-    <h1>Animaux</h1>
-    
-    <div class="search-box">
-        <input v-model="searchQuery" placeholder="Rechercher un chat..." />
+    <h1>Animaux à l'adoption</h1>
+ 
+    <p class="subtitle">{{ animalStore.totalAnimals }} animaux attendent une famille !</p>
+
+    <div v-if="animalStore.errorMessage" class="error-box">
+        {{ animalStore.errorMessage }}
     </div>
 
-    <ul>
+    <div v-if="animalStore.isLoading" class="loading-box">
+        Chargement des animaux en cours...
+    </div>
+    
+    <SearchBar @search="handleSearch" v-if="!animalStore.errorMessage" />
+
+    <ul v-if="!animalStore.isLoading && !animalStore.errorMessage">
         <li v-for="animal in filteredList" :key="animal.id">
             <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}" class="card-link">
                 <AnimalCard :animal="animal"></AnimalCard>
             </router-link>
         </li>
     </ul>
+
+    <p v-if="filteredList.length === 0 && !animalStore.isLoading && !animalStore.errorMessage" class="no-results">
+        Aucun animal ne correspond à votre recherche.
+    </p>
   </div>
 </template>
 
@@ -43,21 +60,35 @@ const filteredList = computed(() => {
     }
     .card-link { 
         text-decoration: none; 
-        display: block; }
+        display: block; 
+    }
     h1 {
         text-align: center;
         color: rgb(255, 255, 255); 
         font-size: 3rem;
         margin-top: 1rem;
+        margin-bottom: 0.5rem;
     }
-    .search-box {
+    .subtitle {
         text-align: center;
-        margin-bottom: 20px;
+        color: #fbbf24;
+        font-weight: bold;
+        margin-bottom: 30px;
     }
-    input {
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+    .error-box {
+        background-color: #ef4444;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 20px auto;
+        max-width: 500px;
+    }
+    .loading-box, .no-results {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #9ca3af;
+        margin-top: 50px;
     }
     ul {
         list-style: none;
