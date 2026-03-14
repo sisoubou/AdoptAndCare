@@ -28,9 +28,7 @@ const filteredList = computed(() => {
   <div class="container">
     <h1>Animaux</h1>
     
-    <div class="search-box">
-        <input v-model="searchQuery" placeholder="Rechercher un chat..." />
-    </div>
+    <SearchBar @search="handleSearch" />
 
     <ul>
         <li v-for="animal in filteredList" :key="animal.id">
