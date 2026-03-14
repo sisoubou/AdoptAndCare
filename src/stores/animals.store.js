@@ -1,9 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import axios from 'axios'
 
 export const useAnimalsStore = defineStore('animals', () => {
   const listAnimals = ref([])
+  const isLoading = ref(false);
+  const errorMessage = ref(null)
+
+  const totalAnimals = computed(() => listAnimals.value.length)
 
   const apiCat = axios.create({
     baseURL: 'https://api.thecatapi.com/v1',
@@ -14,6 +18,9 @@ export const useAnimalsStore = defineStore('animals', () => {
   })
 
   const fetchAnimals = async () => {
+    isLoading.value = true
+    errorMessage.value = null
+
     try {
         const response = await apiCat.get('/breeds?limit=20')
 
@@ -36,9 +43,12 @@ export const useAnimalsStore = defineStore('animals', () => {
 
     } catch (error) {
         console.error('Erreur lors du chargement des Animaux', error)
+        errorMessage.value = "Impossible de récupérer les animaux pour le moment, réessayez plus tard"
+    } finally {
+        isLoading.value = false
     }
 }
 
 
-return { listAnimals, fetchAnimals }
+return { listAnimals, isLoading, errorMessage, totalAnimals, fetchAnimals }
 })
