@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AnimalDetailView from '@/views/AnimalDetailView.vue'
-import AnimalsView from '@/views/AnimalsView.vue'
-import HomeView from '@/views/HomeView.vue'
 
 const routes = [
-    {path: '/', name: 'home', component: HomeView},
-    {path: '/animals', name: 'animals', component: AnimalsView},
-    {path: '/animals/:id', name: 'animal-detail', component: AnimalDetailView},
+    {path: '/', name: 'home', component: () => import('@/views/HomeView.vue')},
+    {path: '/animals', name: 'animals', component: () => import('@/views/AnimalsView.vue')},
+    {path: '/animals/:id', name: 'animal-detail', component: () => import('@/views/AnimalDetailView.vue'), children: [
+        {path:'', name:'animal-info', component: () => import('@/components/animals/AnimalInfo.vue')},
+        {path:'contact', name:'animal-contact', component: () => import('@/components/animals/AnimalContact.vue')},
+    ]},
     {path: '/:pathMatch(.*)*', name: 'not-found', component: { template: '<p>Page non trouvé !<p>'}},
 ]
 

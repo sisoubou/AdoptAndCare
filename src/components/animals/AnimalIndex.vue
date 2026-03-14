@@ -25,63 +25,24 @@ const filteredList = computed(() => {
 </script>
 
 <template>
-  <div class="container">
-    <h1>Animaux</h1>
-    
-    <SearchBar @search="handleSearch" />
+    <div class="max-w-7xl mx-auto p-6">
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-10">Nos pensionnaires</h1>
+        
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit">
+                <h2 class="text-xl font-bold text-pink-500 mb-6">Filtres</h2>
+                <SearchBar @search="handleSearch" />
+            </aside>
 
-    <ul>
-        <li v-for="animal in filteredList" :key="animal.id">
-            <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}" class="card-link">
-                <AnimalCard :animal="animal"></AnimalCard>
-            </router-link>
-        </li>
-    </ul>
-  </div>
+            <main class="w-full md:w-3/4">
+                <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <li v-for="animal in filteredList" :key="animal.id">
+                        <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}" class="card-link">
+                            <AnimalCard :animal="animal"></AnimalCard>
+                        </router-link>
+                    </li>
+                </ul>
+            </main>
+        </div>
+    </div>
 </template>
-
-<style scoped>
-    .container {
-        padding: 20px;
-    }
-    .card-link { 
-        text-decoration: none; 
-        display: block; 
-    }
-    h1 {
-        text-align: center;
-        color: rgb(0, 0, 0); 
-        font-size: 3rem;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
-    .subtitle {
-        text-align: center;
-        color: #fbbf24;
-        font-weight: bold;
-        margin-bottom: 30px;
-    }
-    .error-box {
-        background-color: #ef4444;
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        margin: 20px auto;
-        max-width: 500px;
-    }
-    .loading-box, .no-results {
-        text-align: center;
-        font-size: 1.2rem;
-        color: #9ca3af;
-        margin-top: 50px;
-    }
-    ul {
-        list-style: none;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 50px;
-        padding: 10px;
-    }
-</style>

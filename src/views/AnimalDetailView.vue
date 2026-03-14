@@ -34,8 +34,14 @@ onMounted(async () => {
 
         <div class="info-section">
             <h1>{{ animal.name }}</h1>
+            <div class="tabs mt-6 mb-6 flex gap-4">
+                <router-link :to="{ name: 'animal-info', params: { id: animal.id }}" class="text-pink-500 font-bold underline">Info</router-link>
+                <router-link :to="{ name: 'animal-contact', params: { id: animal.id }}" class="text-pink-500 font-bold underline">Contact</router-link>
+            </div>
+
+            <router-view></router-view>
+
             <span class="badge">{{ animal.type[0] }}</span>
-            <p class="description">{{ animal.description }}</p>
             <button class="adopt-btn">Adopter ce chat</button>
         </div>
     </div>
@@ -45,6 +51,7 @@ onMounted(async () => {
     <p>Chargement...</p>
     <button @click="goBack" class="back-btn">Retour</button>
   </div>
+
 </template>
 
 <style scoped>
