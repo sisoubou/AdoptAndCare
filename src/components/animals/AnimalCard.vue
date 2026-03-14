@@ -31,42 +31,33 @@ const typeClass = computed(() => {
 </script>
 
 <style scoped>
-.animal-type {
-    color: #bbb;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
-
 .animal-card {
   position: relative;
   overflow: hidden;
-  width: 240px;
+  width: 100%;
   min-height: 320px;
   padding: 18px 16px 16px;
   border-radius: 18px;
   text-align: center;
-  font-weight: 700;
-  background: linear-gradient(180deg, rgba(28, 28, 32, 0.95), rgba(18, 18, 22, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-
-.animal-image {
-  width: 140px;
-  height: 140px;
-  margin: 6px auto 8px;
-  object-fit: contain;
-  border-radius: 8px;
 }
 
 .animal-name {
   margin: 6px 0 10px;
   font-size: 1.35rem;
+  font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: capitalize;
-  color: #ffffff;
+  color: #1f2937;
+}
+
+.animal-type {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
 }
 </style>
