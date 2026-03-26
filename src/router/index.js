@@ -7,6 +7,8 @@ const routes = [
         {path:'', name:'animal-info', component: () => import('@/components/animals/AnimalInfo.vue')},
         {path:'contact', name:'animal-contact', component: () => import('@/components/animals/AnimalContact.vue')},
     ]},
+    {path: '/add-animal', name: 'add-animal', component: () => import('@/views/AddAnimalView.vue')},
+    {path: '/about', name: 'about', component: () => import('@/views/AboutView.vue')},
     {path: '/:pathMatch(.*)*', name: 'not-found', component: { template: '<p>Page non trouvé !<p>'}},
 ]
 

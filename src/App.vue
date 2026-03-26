@@ -8,7 +8,8 @@ import { RouterLink, RouterView } from 'vue-router';
   <nav>
     <router-link to="/">Home</router-link>
     <router-link to="/animals">Animaux</router-link>
-
+    <router-link to="/add-animal">Faire adopter un animal</router-link>
+    <router-link to="/about">À propos</router-link>
     <router-view/>
   </nav>
 </template>
