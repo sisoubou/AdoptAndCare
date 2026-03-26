@@ -1,6 +1,23 @@
 @import "tailwindcss";
 
 body {
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: #f0f0f0;
+    color: #000;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.neo-brutalism {
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0px 0px #000;
+    transition: all 0.2s ease;
+}
+
+.neo-brutalism:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px 0px #000;
+}
+
+.neo-brutalism:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px 0px #000;
 }

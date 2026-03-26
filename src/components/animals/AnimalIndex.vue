@@ -26,18 +26,32 @@ const filteredList = computed(() => {
 
 <template>
     <div class="max-w-7xl mx-auto p-6">
-        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-10">Nos pensionnaires</h1>
+        <header class="mb-12 text-center">
+            <h1 class="text-6xl font-black uppercase italic tracking-tighter inline-block bg-black text-white px-4 py-2 shadow-[8px_8px_0px_#4ade80]">
+                Le Refuge 2.0
+            </h1>
+        </header>
         
-        <div class="flex flex-col md:flex-row gap-8">
-            <aside class="w-full md:w-1/4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit">
-                <h2 class="text-xl font-bold text-pink-500 mb-6">Filtres</h2>
-                <SearchBar @search="handleSearch" />
+        <div class="flex flex-col md:flex-row gap-10">
+            <aside class="w-full md:w-1/4">
+                <div class="win98-window bg-[#c0c0c0] p-1 border-2 border-black shadow-[4px_4px_0px_#000]">
+                    <div class="bg-[#000080] text-white px-2 py-1 font-bold text-xs flex justify-between uppercase">
+                        <span>Filtres</span>
+                        <span>? X</span>
+                    </div>
+                    <div class="p-4">
+                        <SearchBar @search="handleSearch" />
+                        <div class="mt-4 p-2 border-2 border-black border-inset bg-white text-xs font-mono">
+                            Total_Items: {{ filteredList.length }}
+                        </div>
+                    </div>
+                </div>
             </aside>
 
             <main class="w-full md:w-3/4">
-                <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     <li v-for="animal in filteredList" :key="animal.id">
-                        <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}" class="card-link">
+                        <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}">
                             <AnimalCard :animal="animal"></AnimalCard>
                         </router-link>
                     </li>

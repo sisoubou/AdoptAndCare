@@ -39,45 +39,69 @@ onMounted(() => {
 
 <template>
   <div class="max-w-7xl mx-auto p-6 mt-6">
-    <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-10">Encyclopédie des Races</h1>
+    <h1 class="text-6xl font-black text-center mb-12 uppercase italic tracking-tighter"
+        style="-webkit-text-stroke: 2px black; text-shadow: 8px 8px 0px #4ade80;">
+        Encyclopédie.txt
+    </h1>
     
-    <div class="flex justify-center gap-6 mb-10">
+    <div class="flex justify-center gap-6 mb-16">
         <button 
             @click="changeSpecies('cats')" 
-            :class="selectedSpecies === 'cats' ? 'bg-pink-500 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'" 
-            class="px-8 py-3 rounded-full font-bold transition">
-            🐱 Voir les Chats
+            :class="selectedSpecies === 'cats' ? 'bg-[#ccff00] translate-x-1 translate-y-1 shadow-none' : 'bg-white hover:bg-[#ccff00]'" 
+            class="neo-brutalism px-10 py-4 font-black uppercase italic text-xl transition-all">
+            🐱 Chats (Acid)
         </button>
         <button 
             @click="changeSpecies('dogs')" 
-            :class="selectedSpecies === 'dogs' ? 'bg-pink-500 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'" 
-            class="px-8 py-3 rounded-full font-bold transition">
-            🐶 Voir les Chiens
+            :class="selectedSpecies === 'dogs' ? 'bg-[#0033ff] text-white translate-x-1 translate-y-1 shadow-none' : 'bg-white hover:bg-[#0033ff] hover:text-white'" 
+            class="neo-brutalism px-10 py-4 font-black uppercase italic text-xl transition-all">
+            🐶 Chiens (Electric)
         </button>
     </div>
 
-    <div v-if="isLoading" class="text-center text-gray-500 text-xl py-10">
-        Chargement des informations en cours...
+    <div v-if="isLoading" class="text-center py-20">
+        <div class="inline-block border-2 border-black p-4 bg-white font-mono animate-pulse">
+            LOADING_DATA... [|||||||||---]
+        </div>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="breed in breeds" :key="breed.id" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:-translate-y-1 hover:shadow-lg transition">
-            <img v-if="breed.image?.url" :src="breed.image.url" class="w-full h-56 object-cover rounded-xl mb-4" />
-            <div v-else class="w-full h-56 bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-400">Pas de photo</div>
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div v-for="(breed, index) in breeds" :key="breed.id" 
+             class="sticker-card bg-white p-4 border-2 border-black shadow-[8px_8px_0px_#000] hover:rotate-2 transition-transform"
+             :style="{ transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)` }">
             
-            <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ breed.name }}</h2>
-            <p class="text-sm font-semibold text-pink-500 mb-3">📍 Origine : {{ breed.origin || 'Inconnue' }}</p>
+            <div class="relative mb-4 border-2 border-black overflow-hidden group">
+                <img v-if="breed.image?.url" :src="breed.image.url" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div v-else class="w-full h-64 bg-gray-200 flex items-center justify-center font-black">NO_IMG.JPG</div>
+                <div class="absolute bottom-2 left-2 bg-yellow-300 border-2 border-black px-2 py-1 text-[10px] font-black uppercase">
+                    {{ breed.origin || 'Web' }}
+                </div>
+            </div>
             
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                {{ breed.description ? breed.description : 'Aucune description disponible pour cette race, mais elle est très mignonne !' }}
+            <h2 class="text-2xl font-black uppercase leading-none mb-2">{{ breed.name }}</h2>
+            
+            <p class="text-xs font-bold text-gray-700 mb-4 line-clamp-3 font-mono">
+                {{ breed.description || 'Information classée confidentielle pour cette espèce.' }}
             </p>
             
-            <div class="flex flex-wrap gap-2 mt-4 border-t pt-4 border-gray-100">
-                <span v-for="temp in (breed.temperament ? breed.temperament.split(',') : []).slice(0, 3)" :key="temp" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-full text-xs font-medium border border-pink-100">
-                    {{ temp.trim() }}
+            <div class="flex flex-wrap gap-2 pt-4 border-t-2 border-dotted border-black">
+                <span v-for="temp in (breed.temperament ? breed.temperament.split(',') : []).slice(0, 2)" :key="temp" 
+                      class="bg-black text-white text-[10px] px-2 py-1 uppercase font-bold">
+                    #{{ temp.trim() }}
                 </span>
             </div>
         </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.sticker-card {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+
+.sticker-card:hover {
+    z-index: 20;
+    box-shadow: 12px 12px 0px #ff1493;
+}
+</style>

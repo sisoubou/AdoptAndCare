@@ -23,39 +23,40 @@ const handleSubmit = () => {
 
 <template>
   <div class="max-w-3xl mx-auto p-6 mt-10">
-    <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Faire adopter un animal</h1>
-        <p class="text-gray-500 mb-8">Remplissez ce formulaire pour publier une annonce d'adoption.</p>
+    <div class="neo-brutalism bg-purple-400 p-8">
+        <h1 class="text-5xl font-black text-black uppercase mb-2 tracking-tighter">Nouveau Meilleur Ami 🐾</h1>
+        <p class="font-bold text-black border-b-2 border-black pb-4 mb-8 italic">Partage une annonce d'adoption</p>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Nom de l'animal *</label>
-                <input v-model="newAnimal.name" type="text" required class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500" placeholder="Ex: Félix" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label class="font-black uppercase text-sm mb-1">Nom du pet</label>
+                    <input v-model="newAnimal.name" type="text" required class="neo-brutalism p-3 focus:bg-yellow-200 outline-none" placeholder="Félix, Rex..." />
+                </div>
+
+                <div class="flex flex-col">
+                    <label class="font-black uppercase text-sm mb-1">Espèce</label>
+                    <select v-model="newAnimal.type" class="neo-brutalism p-3 bg-white font-bold outline-none">
+                        <option value="Chat">Chat 🐱</option>
+                        <option value="Chien">Chien 🐶</option>
+                        <option value="Lapin">Lapin 🐰</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Espèce *</label>
-                <select v-model="newAnimal.type" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500">
-                    <option value="Chat">Chat</option>
-                    <option value="Chien">Chien</option>
-                    <option value="Lapin">Lapin</option>
-                    <option value="Autre">Autre</option>
-                </select>
+            <div class="flex flex-col">
+                <label class="font-black uppercase text-sm mb-1">URL de la photo</label>
+                <input v-model="newAnimal.image" type="url" class="neo-brutalism p-3 outline-none" placeholder="https://..." />
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Lien d'une photo (URL)</label>
-                <input v-model="newAnimal.image" type="url" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500" placeholder="https://..." />
+            <div class="flex flex-col">
+                <label class="font-black uppercase text-sm mb-1">Bio / Caractère</label>
+                <textarea v-model="newAnimal.description" required rows="4" class="neo-brutalism p-3 outline-none" placeholder="Il est super chill..."></textarea>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
-                <textarea v-model="newAnimal.description" required rows="4" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500" placeholder="Racontez son histoire et son caractère..."></textarea>
-            </div>
-
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-xl transition-colors">
-                Publier l'annonce
+            <button type="submit" class="w-full bg-black text-white font-black py-5 text-2xl uppercase tracking-widest hover:bg-green-400 hover:text-black transition-colors shadow-[6px_6px_0px_#fff] active:translate-y-1">
+                PUBLIER L'ANNONCE
             </button>
         </form>
     </div>

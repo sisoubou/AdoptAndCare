@@ -1,15 +1,27 @@
 <template>
-  <div class="animal-card" :class="typeClass">
-    <img :src="animal.image" :alt="animal.name" class="animal-image" />
-    <h2 class="animal-name">{{ animal.name }}</h2>
-
-    <h3 class="animal-type">
-      {{ displayTypes }}
-    </h3>
-
-    <slot></slot>
+  <div class="animal-card neo-brutalism bg-yellow-300">
+    <div class="p-2">
+        <img :src="animal.image" :alt="animal.name" class="w-full h-48 object-cover border-2 border-black rounded-lg" />
+    </div>
+    <div class="p-4 bg-white border-t-2 border-black">
+        <h2 class="text-2xl font-black italic uppercase italic">{{ animal.name }}</h2>
+        <div class="flex flex-wrap gap-1 mt-2">
+            <span v-for="t in animal.type" :key="t" class="text-[10px] bg-cyan-300 border border-black px-2 py-0.5 font-bold uppercase">
+                {{ t }}
+            </span>
+        </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.animal-card {
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0px 0px #000;
+  border-radius: 0px;
+  overflow: hidden;
+}
+</style>
 
 <script setup>
 import { computed } from 'vue'
@@ -29,35 +41,3 @@ const typeClass = computed(() => {
     return 'default-type'
 })
 </script>
-
-<style scoped>
-.animal-card {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  min-height: 320px;
-  padding: 18px 16px 16px;
-  border-radius: 18px;
-  text-align: center;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.animal-name {
-  margin: 6px 0 10px;
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: capitalize;
-  color: #1f2937;
-}
-
-.animal-type {
-    color: #6b7280;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
-</style>

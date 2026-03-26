@@ -1,18 +1,20 @@
 <template>
     <div class="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h1 class="text-5xl font-extrabold text-gray-900 mb-6">Bienvenue sur notre site</h1>
-        <p class="text-xl text-gray-600 mb-10 max-w-2x1 mx-auto">Découvrez nos animaux à adopter</p>
-
-        <router-link to="/animals" class="inline-block bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-8 rounded-full transition-transform hover:scale-105 shadow-md">
-            Voir nos {{ animalStore.listAnimals.length }} animaux
+        <h1 class="text-7xl font-black text-white uppercase tracking-tighter mb-6" 
+            style="-webkit-text-stroke: 3px black; text-shadow: 6px 6px 0px #ff1493;">
+            Adopte moi !
+        </h1>
+        
+        <router-link to="/animals" 
+            class="neo-brutalism inline-block bg-green-400 text-black font-black py-4 px-10 rounded-none text-2xl uppercase italic">
+            Trouve ton meilleur ami 🐾
         </router-link>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 text-left">
-        <div v-for="animal in animalStore.listAnimals.slice(0, 6)" :key="animal.id" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="text-xl font-bold mb-2">{{ animal.name }}</h2>
-            <p class="text-gray-600 mb-4">{{ animal.type ? animal.type.join(', ') : 'Inconnu' }}</p>
-            <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}" class="text-pink-500 hover:text-pink-600 font-semibold">
-                Voir les détails
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 p-10">
+        <div v-for="animal in animalStore.listAnimals.slice(0, 3)" :key="animal.id">
+            <router-link :to="{ name: 'animal-detail', params: { id: animal.id }}">
+                <AnimalCard :animal="animal" />
             </router-link>
         </div>
     </div>
