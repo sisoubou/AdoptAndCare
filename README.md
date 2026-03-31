@@ -1,141 +1,73 @@
 # AdoptAndCare - Cyber_Refuge
 
-Une application web rétro pour consulter et adopter des animaux. Naviguez dans l'univers nostalgique du Windows 95 pour trouver votre compagnon idéal!
+Une application web rétro pour consulter et adopter des animaux. Naviguez pour trouver votre compagnon idéal !
 
-## Caractéristiques
+## Technologies utilisées
 
-- **Liste d'animaux** : Parcourir tous les animaux disponibles avec filtres par type
-- **Détails des animaux** : Consulter les informations complètes de chaque animal
-- **Gestion des races** : Afficher les détails des races d'animaux
-- **Ajout d'animaux** : Interface pour ajouter de nouveaux animaux à la base de données
-- **Recherche** : Barre de recherche pour filtrer les animaux
-- **Responsive** : Adapté à différentes tailles d'écran
+* **Vue 3** : Utilisation de la Composition API et des fonctionnalités réactives (`ref`, `computed`, `watch`).
+* **Vite** : Outil de build configuré avec le plugin `@tailwindcss/vite` pour supporter Tailwind v4.
+* **Vue Router** : Gestion de la navigation dynamique, des paramètres de route (`:id`) et des sous-routes pour les détails.
+* **Pinia** : Store centralisé pour la gestion des animaux et des favoris avec persistance des données.
+* **Tailwind CSS v4** : Framework CSS utilisé pour l'interface graphique rétro via la directive `@import`.
+* **Axios** : Client HTTP pour la consommation d'APIs RESTful (races d'animaux et simulation d'envoi).
 
-## Technologies
+## Installation et Lancement
 
-- **Vue 3** : Framework JavaScript progressif
-- **Vite** : Outils de build ultra-rapides
-- **Vue Router** : Routage côté client
-- **Pinia** : Gestion d'état simple et intuitif
-- **Tailwind CSS** : Framework CSS utilitaire
-- **Axios** : Client HTTP pour les requêtes API
+1.  **Cloner le projet**
+    ```bash
+    git clone <votre-lien-git>
+    cd AdoptAndCare
+    ```
 
-## Prérequis
+2.  **Installer les dépendances**
+    ```bash
+    npm install
+    ```
 
-- Node.js `^20.19.0` ou `>=22.12.0`
+3.  **Lancer le serveur de développement**
+    ```bash
+    npm run dev
+    ```
+    L'application sera accessible sur `http://localhost:5173`.
 
-## Installation
+## Architecture des Routes
 
-1. **Cloner le projet**
-```bash
-git clone <repository-url>
-cd AdoptAndCare
-```
+| Chemin | Composant | Description |
+| :--- | :--- | :--- |
+| `/` | `HomeView` | Page d'accueil interactive. |
+| `/animals` | `AnimalsView` | Explorateur d'animaux avec filtres et recherche. |
+| `/animals/:id` | `AnimalDetailView` | Fiche détaillée avec sous-routes (Infos/Contact). |
+| `/add-animal` | `AddAnimalView` | Formulaire d'ajout d'un nouveau compagnon. |
+| `/about` | `AboutView` | Encyclopédie complète des races (Wiki). |
+| `/breed/:species/:id` | `BreedDetailView` | Spécifications techniques d'une race via API. |
 
-2. **Installer les dépendances**
-```bash
-npm install
-```
+## Gestion d'état (Pinia Store)
 
-3. **Lancer le serveur de développement**
-```bash
-npm run dev
-```
+Le store `animals.store.js` centralise la logique de l'application :
+* **État** : Stocke la liste des animaux (`listAnimals`) et les IDs des favoris (`favoriteAnimals`).
+* **Actions** : 
+    * `addAnimal` : Ajoute un animal avec un ID unique et sauvegarde dans le `localStorage`.
+    * `removeAnimal` : Supprime un animal de la collection.
+    * `toggleFavorite` : Alterne l'état de favori d'un animal.
 
-L'application sera accessible sur `http://localhost:5173`
+## Difficultés Rencontrées & Solutions
 
-## Build pour la production
+* **Problème de configuration Tailwind** : La nouvelle version (v4) nécessitait un plugin Vite spécifique pour résoudre les imports CSS. 
+    * *Solution* : Installation de `@tailwindcss/vite` et mise à jour de `vite.config.js`.
+* **Données API incomplètes** : Certaines races ne possédaient pas d'URL d'image directe dans la réponse API.
+    * *Solution* : Construction dynamique de l'URL via le `reference_image_id` et mise en place d'un système de "fallback" (image par défaut) en cas d'erreur 404.
+* **Persistance des données** : Les ajouts d'animaux étaient perdus au rafraîchissement.
+    * *Solution* : Synchronisation du store Pinia avec le `localStorage` du navigateur.
 
-```bash
-npm run build
-```
+## Organisation et Répartition
 
-Les fichiers générés se trouvent dans le dossier `dist/`.
+* **Répartition** : Projet réalisé en **individuel** par Serena Fadda.
+* **Organisation** : Développement par étapes : architecture des routes, création du store, intégration des APIs RESTful et enfin polissage de l'interface utilisateur (UI) rétro.
 
-## Aperçu du site
+## Sources de données (APIs)
 
-**Après la compilation :**
-```bash
-npm run preview
-```
+* **TheCatAPI / TheDogAPI** : Récupération des races et caractéristiques.
+* **JSONPlaceholder** : Simulation d'appels POST pour les formulaires d'adoption.
 
-## Structure du projet
-
-```
-src/
-├── components/
-│   └── animals/
-│       ├── AnimalCard.vue          # Carte d'un animal (liste)
-│       ├── AnimalContact.vue       # Infos de contact
-│       ├── AnimalIndex.vue         # Liste avec filtres
-│       ├── AnimalInfo.vue          # Infos détaillées
-│       └── SearchBar.vue           # Barre de recherche
-├── router/
-│   └── index.js                    # Configuration du routeur
-├── stores/
-│   └── animals.store.js            # Store Pinia pour les animaux
-├── views/
-│   ├── AboutView.vue               # Page À propos
-│   ├── AddAnimalView.vue           # Ajouter un animal
-│   ├── AnimalDetailView.vue        # Détails d'un animal
-│   ├── AnimalsView.vue             # Vue principale (liste)
-│   ├── BreedDetailView.vue         # Détails d'une race
-│   ├── HomeView.vue                # Page d'accueil
-│   └── NotFoundView.vue            # Erreur 404
-├── assets/
-│   └── main.css                    # Styles globaux
-├── App.vue                         # Composant racine
-└── main.js                         # Point d'entrée
-```
-
-## Routes disponibles
-
-| Route | Description |
-|-------|------------|
-| `/` | Accueil |
-| `/animals` | Liste de tous les animaux |
-| `/animals/:id` | Détails d'un animal |
-| `/breeds/:id` | Détails d'une race |
-| `/add` | Ajouter un nouvel animal |
-| `/about` | À propos |
-| `/:pathMatch(.)*` | Page 404 |
-
-## Gestion d'état (Pinia)
-
-Le store `animals.store.js` gère :
-- Liste des animaux
-- Actions pour ajouter/modifier/supprimer des animaux
-- État global de l'application
-
-## Fonctionnalités
-
-### AnimalCard
-- Affiche la photo de l'animal
-- Affiche le type d'animal
-- Message "Image indisponible" si aucune image
-- Lien vers les détails
-
-### AnimalIndex
-- Filtrage par type d'animal
-- Recherche par nom
-- Affichage en grille
-
-### AnimalDetailView
-- Informations complètes de l'animal
-- Photo avec fallback "Image indisponible"
-- Infos de contact
-- Lien vers la race
-
-### AddAnimalView
-- Formulaire pour ajouter un nouvel animal
-- Validation des données
-- Intégration avec le store
-
-## API Utilisée
-The c
-
-## Auteur
-
-Projet développé par Serena Fadda en Mars 2026.
-
-
+---
+*Projet réalisé pour le cours Framework Web 2 - Session Mars 2026.*
