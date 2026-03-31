@@ -6,6 +6,7 @@ import { useAnimalsStore } from '@/stores/animals.store'
 
 const animalStore = useAnimalsStore()
 const searchQuery = ref('')
+const selectedType = ref('all')
 
 onMounted(async () => {
   if (animalStore.listAnimals.length === 0) {
@@ -17,11 +18,19 @@ const handleSearch = (query) => {
     searchQuery.value = query
 }
 
+const availableTypes = computed(() => {
+    const types = animalStore.listAnimals.map(a => a.type[0])
+    return ['all', ...new Set(types)]
+})
+
 const filteredList = computed(() => {
   return animalStore.listAnimals.filter(animal => {
-    return animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesSearch = animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesType = selectedType.value === 'all' || animal.type === selectedType.value
+    return matchesSearch && matchesType
   })
 })
+
 </script>
 
 <template>
@@ -41,6 +50,14 @@ const filteredList = computed(() => {
                     </div>
                     <div class="p-4">
                         <SearchBar @search="handleSearch" />
+                        <div class="mt-4 mb-2">
+                            <label class="block text-xs font-black uppercase mb-2 text-left">Type.dll</label>
+                            <select v-model="selectedType" class="neo-brutalism w-full p-2 bg-white font-bold">
+                                <option v-for="type in availableTypes" :key="type" :value="type">
+                                    {{ type === 'all' ? 'Tous les types' : type }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="mt-4 p-2 border-2 border-black border-inset bg-white text-xs font-mono">
                             Total_Items: {{ filteredList.length }}
                         </div>

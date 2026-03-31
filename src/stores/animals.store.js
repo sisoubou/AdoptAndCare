@@ -3,82 +3,50 @@ import { ref, computed } from 'vue'
 import axios from 'axios'
 
 export const useAnimalsStore = defineStore('animals', () => {
-  const listAnimals = ref([])
-  const isLoading = ref(false);
-  const errorMessage = ref(null)
+    const listAnimals = ref(JSON.parse(localStorage.getItem('my_animals')) || [])
+    const isLoading = ref(false)
 
-  const totalAnimals = computed(() => listAnimals.value.length)
-
-  const apiCat = axios.create({
-    baseURL: 'https://api.thecatapi.com/v1',
-    timeout: 5000,
-    headers: { 
-        'x-api-key': 'live_6DD1Fuov5nKpVJVtCnNmmBkXypIMR0tBDqSdD7LVxCafxvYGhksI96HTQJscGcX4'
-    }
-  })
-
-  const apiDog = axios.create({
-    baseURL: 'https://api.thedogapi.com/v1',
-    timeout: 5000,
-    headers: {
-        'x-api-key': 'live_4KTzXfkR38ftodklW2OSwuc5BB2R7SFfE2mOXaIXm8hOOYU6Ip0T0hjqUQ61MXc9'
-    }
-  })
-
-  const fetchAnimals = async () => {
+    const fetchAnimals = async () => {
+    if (listAnimals.value.length > 0 && listAnimals.value.some(a => a.id.includes('cat-'))) return;
+    
     isLoading.value = true
-    errorMessage.value = null
-
     try {
-        const [catResponse, dogResponse] = await Promise.all([
-            apiCat.get('/breeds?limit=12'),
-            apiDog.get('/breeds?limit=12')
+        const [catRes, dogRes] = await Promise.all([
+            axios.get('https://api.thecatapi.com/v1/breeds?limit=10'),
+            axios.get('https://api.thedogapi.com/v1/breeds?limit=10')
         ])
 
-        let formattedCats = catResponse.data.map((data) => {
-            return {
-                id: 'cat-' + data.id,
-                name: data.name,
-                type: ['Chat', data.origin].filter(Boolean),
-                description: data.description,
-                image: data.image?.url || 'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg'
-            }
-        })
-
-        let formattedDogs = dogResponse.data.map((data) => {
-            return {
-                id: 'dog-' + data.id,
-                name: data.name,
-                type: ['Chien', data.breed_group || 'Inconnu'].filter(Boolean),
-                description: data.temperament ? `Caractère : ${data.temperament}` : 'Un super chien très affectueux !',
-                image: data.image?.url || 'https://cdn2.thedogapi.com/images/BJa4kxc4X.jpg' 
-            }
-        })
-
-        let combinedAnimals = [...formattedCats, ...formattedDogs]
-
-        combinedAnimals.sort(() => Math.random() - 0.5)
-
-        listAnimals.value = combinedAnimals
-
-    } catch (error) {
-        console.error('Erreur lors du chargement des Animaux', error)
-        errorMessage.value = "Impossible de récupérer les animaux pour le moment, réessayez plus tard"
+        const formatted = [
+            ...catRes.data.map(d => ({
+                id: 'cat-' + d.id,
+                name: d.name,
+                type: ['Chat'],
+                description: d.description,
+                image: d.image?.url || 'https://placehold.co/400x400?text=Chat'
+            })),
+            ...dogRes.data.map(d => ({
+                id: 'dog-' + d.id,
+                name: d.name,
+                type: ['Chien'],
+                description: d.temperament,
+                image: d.image?.url || 'https://placehold.co/400x400?text=Chien'
+            }))
+        ]
+        listAnimals.value = [...listAnimals.value, ...formatted]
     } finally {
         isLoading.value = false
     }
   }
 
-const addAnimal = (newAnimal) => {
-    const animalWithId = {
+  const addAnimal = (newAnimal) => {
+    listAnimals.value.unshift({
         ...newAnimal,
         id: 'custom-' + Date.now(),
         type: [newAnimal.type],
-        image: newAnimal.image || 'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg'
-    }
-    listAnimals.value.unshift(animalWithId)
-    }
+        breed: newAnimal.breed.trim() === '' ? 'Sans race' : newAnimal.breed
+    })
+    localStorage.setItem('my_animals', JSON.stringify(listAnimals.value.filter(a => a.id.startsWith('custom-'))))
+  }
 
-
-return { listAnimals, isLoading, errorMessage, totalAnimals, fetchAnimals, addAnimal }
+  return { listAnimals, isLoading, fetchAnimals, addAnimal }
 })

@@ -62,7 +62,9 @@ onMounted(async () => {
                     <span class="inline-block bg-cyan-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit">
                         Type: {{ animal.type[0] }}
                     </span>
-                    
+                    <span class="inline-block bg-yellow-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit">
+                        Breed: {{ animal.breed || 'Inconnu' }}
+                    </span>                    
                     <button class="adopt-btn-y2k">
                         ADOPTER MAINTENANT !
                     </button>

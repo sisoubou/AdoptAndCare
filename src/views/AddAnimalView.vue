@@ -6,14 +6,20 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 const animalStore = useAnimalsStore()
 
-const newAnimal = ref({
-  name: '',
-  type: '',
-  breed: '',
-  age: null,
-  description: '',
-  imageUrl: ''
-})
+const previewImage = ref(null)
+const newAnimal = ref({ name: '', type: 'Chat', description: '', image: '' })
+
+const handleFileUpload = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            newAnimal.value.image = e.target.result
+            previewImage.value = e.target.result
+        }
+        reader.readAsDataURL(file)
+    }
+}
 
 const handleSubmit = () => {
   animalStore.addAnimal(newAnimal.value)
@@ -24,38 +30,37 @@ const handleSubmit = () => {
 <template>
   <div class="max-w-3xl mx-auto p-6 mt-10">
     <div class="neo-brutalism bg-purple-400 p-8">
-        <h1 class="text-5xl font-black text-black uppercase mb-2 tracking-tighter">Nouveau Meilleur Ami 🐾</h1>
-        <p class="font-bold text-black border-b-2 border-black pb-4 mb-8 italic">Partage une annonce d'adoption</p>
+        <h1 class="text-4xl font-black uppercase mb-6">Nouveau Compagnon 🐾</h1>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="flex flex-col">
-                    <label class="font-black uppercase text-sm mb-1">Nom du pet</label>
-                    <input v-model="newAnimal.name" type="text" required class="neo-brutalism p-3 focus:bg-yellow-200 outline-none" placeholder="Félix, Rex..." />
+            <div class="grid grid-cols-2 gap-4">
+                <input v-model="newAnimal.name" placeholder="Nom" required class="neo-brutalism p-3" />
+                <select v-model="newAnimal.type" class="neo-brutalism p-3">
+                    <option value="Chat">Chat 🐱</option>
+                    <option value="Chien">Chien 🐶</option>
+                    <option value="Autre">Autre ✨</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-1 gap-4">
+                <input v-model="newAnimal.name" placeholder="Nom" required class="neo-brutalism p-3" />
+                
+                <div class="flex flex-col gap-1">
+                    <input v-model="newAnimal.breed" placeholder="Race (ex: Golden Retriever)" class="neo-brutalism p-3" />
+                    <label class="flex items-center gap-2 text-xs font-bold mt-1">
+                        <input type="checkbox" @change="newAnimal.breed = $event.target.checked ? 'Sans race' : ''" />
+                        JE NE CONNAIS PAS LA RACE / SANS RACE
+                    </label>
                 </div>
-
-                <div class="flex flex-col">
-                    <label class="font-black uppercase text-sm mb-1">Espèce</label>
-                    <select v-model="newAnimal.type" class="neo-brutalism p-3 bg-white font-bold outline-none">
-                        <option value="Chat">Chat 🐱</option>
-                        <option value="Chien">Chien 🐶</option>
-                        <option value="Lapin">Lapin 🐰</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-black uppercase text-xs">Photo (Fichier local)</label>
+                <input type="file" @change="handleFileUpload" accept="image/*" class="neo-brutalism p-2 bg-white" />
+                <img v-if="previewImage" :src="previewImage" class="w-32 h-32 object-cover border-2 border-black mt-2" />
             </div>
 
-            <div class="flex flex-col">
-                <label class="font-black uppercase text-sm mb-1">URL de la photo</label>
-                <input v-model="newAnimal.image" type="url" class="neo-brutalism p-3 outline-none" placeholder="https://..." />
-            </div>
+            <textarea v-model="newAnimal.description" placeholder="Description..." required class="neo-brutalism w-full p-3"></textarea>
 
-            <div class="flex flex-col">
-                <label class="font-black uppercase text-sm mb-1">Bio / Caractère</label>
-                <textarea v-model="newAnimal.description" required rows="4" class="neo-brutalism p-3 outline-none" placeholder="Il est super chill..."></textarea>
-            </div>
-
-            <button type="submit" class="w-full bg-black text-white font-black py-5 text-2xl uppercase tracking-widest hover:bg-green-400 hover:text-black transition-colors shadow-[6px_6px_0px_#fff] active:translate-y-1">
+            <button type="submit" class="w-full bg-black text-white font-black py-4 hover:bg-green-400 hover:text-black transition-all">
                 PUBLIER L'ANNONCE
             </button>
         </form>
