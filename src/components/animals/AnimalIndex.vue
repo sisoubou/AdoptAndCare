@@ -7,6 +7,7 @@ import { useAnimalsStore } from '@/stores/animals.store'
 const animalStore = useAnimalsStore()
 const searchQuery = ref('')
 const selectedType = ref('all')
+const showFavorites = ref(false)
 
 onMounted(async () => {
   if (animalStore.listAnimals.length === 0) {
@@ -27,7 +28,8 @@ const filteredList = computed(() => {
   return animalStore.listAnimals.filter(animal => {
     const matchesSearch = animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchesType = selectedType.value === 'all' || animal.type[0] === selectedType.value
-    return matchesSearch && matchesType
+    const matchesFavorite = !showFavorites.value || animalStore.isFavorite(animal.id)
+    return matchesSearch && matchesType && matchesFavorite
   })
 })
 
@@ -57,6 +59,10 @@ const filteredList = computed(() => {
                                     {{ type === 'all' ? 'Tous les types' : type }}
                                 </option>
                             </select>
+                            <div class="mt-4 flex items-center gap-2">
+                                <input type="checkbox" id="favorites" v-model="showFavorites" class="form-checkbox h-4 w-4 text-pink-500">
+                                <label for="favorites" class="text-xs font-black uppercase">Favoris_Uniquement.exe</label>
+                            </div>
                         </div>
                         <div class="mt-4 p-2 border-2 border-black border-inset bg-white text-xs font-mono">
                             Total_Items: {{ filteredList.length }}

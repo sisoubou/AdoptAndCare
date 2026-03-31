@@ -4,8 +4,9 @@ import axios from 'axios'
 
 export const useAnimalsStore = defineStore('animals', () => {
     const listAnimals = ref(JSON.parse(localStorage.getItem('my_animals')) || [])
+    const favoriteAnimals = ref(JSON.parse(localStorage.getItem('my_favorites')) || [])
     const isLoading = ref(false)
-
+x
     const fetchAnimals = async () => {
     if (listAnimals.value.some(a => a.id.startsWith('cat-') || a.id.startsWith('dog-'))) return;
     
@@ -58,5 +59,17 @@ export const useAnimalsStore = defineStore('animals', () => {
     localStorage.setItem('my_animals', JSON.stringify(customAnimals))
   }
 
-  return { listAnimals, isLoading, fetchAnimals, addAnimal, removeAnimal }
+  const toggleFavorite = (id) => {
+    const index = favoriteAnimals.value.indexOf(id)
+    if (index > -1) {
+        favoriteAnimals.value.splice(index, 1)
+    } else {
+        favoriteAnimals.value.push(id)
+    }
+    localStorage.setItem('my_favorites', JSON.stringify(favoriteAnimals.value))
+  }
+
+  const isFavorite = (id) => favoriteAnimals.value.includes(id)
+
+  return { listAnimals, isLoading, fetchAnimals, addAnimal, removeAnimal, toggleFavorite, isFavorite }
 })
