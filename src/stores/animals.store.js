@@ -21,21 +21,29 @@ export const useAnimalsStore = defineStore('animals', () => {
             ...catRes.data.map(d => ({
                 id: 'cat-' + d.id,
                 name: d.name,
-                type: ['Chat'],
+                type: 'Chat',
                 description: d.description,
                 image: d.image?.url || 'https://placehold.co/400x400?text=Chat',
                 breed: d.name,
-                breedId: d.id
+                breedId: d.id,
+                age: Math.floor(Math.random() * 15) + 1,
+                gender: Math.random() > 0.5 ? 'Mâle' : 'Femelle'
             })),
-            ...dogRes.data.map(d => ({
-                id: 'dog-' + d.id,
-                name: d.name,
-                type: ['Chien'],
-                description: d.temperament,
-                image: d.image?.url || 'https://placehold.co/400x400?text=Chien',
-                breed: d.name,
-                breedId: d.id
-            }))
+            ...dogRes.data.map(d => {
+                // For dogs, try multiple image sources
+                const imageUrl = d.image?.url || d.reference_image_id || null
+                return {
+                    id: 'dog-' + d.id,
+                    name: d.name,
+                    type: 'Chien',
+                    description: d.temperament || 'Race de chien',
+                    image: imageUrl ? (imageUrl.startsWith('http') ? imageUrl : `https://cdn2.thedogapi.com/images/${imageUrl}.jpg`) : 'https://placehold.co/400x400?text=Chien',
+                    breed: d.name,
+                    breedId: d.id,
+                    age: Math.floor(Math.random() * 15) + 1,
+                    gender: Math.random() > 0.5 ? 'Mâle' : 'Femelle'
+                }
+            })
         ]
         listAnimals.value = [...listAnimals.value, ...formatted]
     } finally {
@@ -47,7 +55,7 @@ export const useAnimalsStore = defineStore('animals', () => {
     listAnimals.value.unshift({
         ...newAnimal,
         id: 'custom-' + Date.now(),
-        type: [newAnimal.type],
+        type: newAnimal.type,
         breed: newAnimal.breed.trim() === '' ? 'Sans race' : newAnimal.breed
     })
     localStorage.setItem('my_animals', JSON.stringify(listAnimals.value.filter(a => a.id.startsWith('custom-'))))

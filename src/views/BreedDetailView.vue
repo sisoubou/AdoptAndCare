@@ -1,65 +1,82 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAnimalsStore } from '@/stores/animals.store'
 import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
+const animalStore = useAnimalsStore()
 const breed = ref(null)
 const isLoading = ref(true)
 const species = route.params.species 
 
-const API_KEY = 'live_4KTzXfkR38ftodklW2OSwuc5BB2R7SFfE2mOXaIXm8hOOYU6Ip0T0hjqUQ61MXc9';
-
 onMounted(async () => {
-  if (!isNaN(route.params.id) && route.params.id.length > 10) {
-    breed.value = { 
-      name: "Race personnalisée", 
-      description: "Cette race a été ajoutée manuellement et n'est pas dans l'encyclopédie officielle." 
+  isLoading.value = true
+  
+  // First, try to find the breed in the store
+  const breedFromStore = animalStore.listAnimals.find(a => 
+    a.breedId === route.params.id && 
+    ((species === 'cats' && a.type === 'Chat') || (species === 'dogs' && a.type === 'Chien'))
+  )
+  
+  if (breedFromStore) {
+    breed.value = {
+      name: breedFromStore.breed,
+      description: breedFromStore.description,
+      imageUrl: breedFromStore.image,
+      temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
     }
     isLoading.value = false
     return
   }
 
-  isLoading.value = true
-  
-  try {
-    const url = species === 'cats' 
-      ? `https://api.thecatapi.com/v1/breeds/search?q=${route.params.id}`
-      : `https://api.thedogapi.com/v1/breeds/search?q=${route.params.id}`
-    
-    const res = await axios.get(url, { 
-      headers: { 'x-api-key': API_KEY } 
-    })
-
-    if (res.data && res.data.length > 0) {
-        breed.value = res.data[0]
-        
-        if (breed.value.reference_image_id) {
-            breed.value.imageUrl = `https://cdn2.the${species === 'cats' ? 'cat' : 'dog'}api.com/images/${breed.value.reference_image_id}.jpg`
-        }
-    } else {
-        const fallbackUrl = species === 'cats'
-            ? `https://api.thecatapi.com/v1/breeds/${route.params.id}`
-            : `https://api.thedogapi.com/v1/breeds/${route.params.id}`
-        
-        const resFallback = await axios.get(fallbackUrl, { headers: { 'x-api-key': API_KEY } })
-        breed.value = resFallback.data
+  // If not in store, try custom breed check
+  if (!isNaN(route.params.id) && route.params.id.length > 10) {
+    breed.value = { 
+      name: "Race personnalisée", 
+      description: "Cette race a été ajoutée manuellement et n'est pas dans l'encyclopédie officielle.",
+      imageUrl: 'https://placehold.co/400x400?text=Race+Personnalisée'
     }
-  } catch (e) {
-    console.error("Erreur technique sur la race:", e)
-  } finally {
     isLoading.value = false
+    return
   }
-})
 
+  // If not found and store is empty, fetch from API with better error handling
+  if (animalStore.listAnimals.length === 0) {
+    await animalStore.fetchAnimals()
+    const breedFromStoreRetry = animalStore.listAnimals.find(a => 
+      a.breedId === route.params.id && 
+      ((species === 'cats' && a.type === 'Chat') || (species === 'dogs' && a.type === 'Chien'))
+    )
+    
+    if (breedFromStoreRetry) {
+      breed.value = {
+        name: breedFromStoreRetry.breed,
+        description: breedFromStoreRetry.description,
+        imageUrl: breedFromStoreRetry.image,
+        temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
+      }
+      isLoading.value = false
+      return
+    }
+  }
+
+  // Fallback: use placeholder if nothing found
+  breed.value = {
+    name: route.params.id || 'Race inconnue',
+    description: 'Informations non disponibles',
+    imageUrl: 'https://placehold.co/400x400?text=Image+Indisponible',
+    temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
+  }
 const goBack = () => {
     router.back()
 }
+
 </script>
 
 <template>
-  <div v-if="breed" class="max-w-5xl mx-auto my-10 px-4">
+  <div v-if="breed" class="max-w-7xl mx-auto my-10 px-4">
     <div class="win98-window">
         <div class="win98-title-bar">
             <span class="font-bold truncate">C:\WIKI\{{ breed.name.toUpperCase() }}.HTM</span>
@@ -70,19 +87,19 @@ const goBack = () => {
         </div>
 
         <div class="p-6 flex flex-col md:flex-row gap-8 bg-[#c0c0c0]">
-            <div class="md:w-1/2 bg-yellow-400 p-4 border-inset">
-                <img :src="`https://cdn2.the${species === 'cats' ? 'cat' : 'dog'}api.com/images/${breed.reference_image_id}.jpg`" 
+            <div class="md:w-1/2 bg-[var(--win-face)] p-4 border-inset flex justify-center">
+                <img :src="breed.imageUrl" 
                      :alt="breed.name" 
-                     class="w-full h-auto border-2 border-black shadow-[4px_4px_0px_#000]"
+                     class="w-auto h-auto border-2 border-black shadow-[4px_4px_0px_#000]"
                      @error="(e) => e.target.src = 'https://placehold.co/400x400?text=Image+Indisponible'" />
             </div>
 
             <div class="md:w-1/2 flex flex-col gap-4">
-                <h1 class="text-5xl font-black italic uppercase tracking-tighter text-black mb-2" style="text-shadow: 3px 3px 0px #ccff00;">
+                <h1 class="text-5xl font-black italic uppercase text-black mb-2 tracking-tighter" style="text-shadow: 3px 3px 0px #808080;">
                     {{ breed.name }}
                 </h1>
 
-                <div class="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_#000]">
+                <div class="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_#000] max-w-md">
                     <h3 class="font-black uppercase mb-3 text-lg border-b-2 border-black pb-1">>> SPECIFICATIONS.TXT</h3>
                     <div class="font-mono text-sm space-y-2 font-bold">
                         <p><span class="text-gray-600">Origin_Location_:</span> {{ breed.origin || 'Unknown' }}</p>

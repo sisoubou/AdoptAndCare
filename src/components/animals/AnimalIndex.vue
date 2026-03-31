@@ -38,34 +38,44 @@ const filteredList = computed(() => {
 <template>
     <div class="max-w-7xl mx-auto p-6">
         <header class="mb-12 text-center">
-            <h1 class="text-6xl font-black uppercase italic tracking-tighter inline-block bg-black text-white px-4 py-2 shadow-[8px_8px_0px_#4ade80]">
+            <h1 class="page-title mb-6">
                 Le Refuge 2.0
             </h1>
         </header>
         
         <div class="flex flex-col md:flex-row gap-10">
             <aside class="w-full md:w-1/4">
-                <div class="win98-window bg-[#c0c0c0] p-1 border-2 border-black shadow-[4px_4px_0px_#000]">
-                    <div class="bg-[#000080] text-white px-2 py-1 font-bold text-xs flex justify-between uppercase">
-                        <span>Filtres</span>
-                        <span>? X</span>
+                <div class="win-window sticky top-20">
+                    <div class="bg-[#000080] text-white px-2 py-1 font-bold text-[10px] flex justify-between items-center uppercase">
+                        <span>Control_Panel.cpl</span>
+                        <span>X</span>
                     </div>
-                    <div class="p-4">
-                        <SearchBar @search="handleSearch" />
-                        <div class="mt-4 mb-2">
-                            <label class="block text-xs font-black uppercase mb-2 text-left">Type.dll</label>
-                            <select v-model="selectedType" class="neo-brutalism w-full p-2 bg-white font-bold">
+                    <div class="p-4 flex flex-col gap-6">
+                        <div>
+                            <label class="text-[10px] font-mono font-black uppercase mb-1 block">Find_Name</label>
+                            <input @input="(e) => handleSearch(e.target.value)" 
+                                class="win-inset w-full p-2 text-sm" placeholder="Taper..." />
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-mono font-black uppercase mb-1 block">Filter_Type</label>
+                            <select v-model="selectedType" class="win-inset w-full p-2 text-sm cursor-pointer">
                                 <option v-for="type in availableTypes" :key="type" :value="type">
-                                    {{ type === 'all' ? 'Tous les types' : type }}
+                                    {{ type.toUpperCase() }}
                                 </option>
                             </select>
-                            <div class="mt-4 flex items-center gap-2">
-                                <input type="checkbox" id="favorites" v-model="showFavorites" class="form-checkbox h-4 w-4 text-pink-500">
-                                <label for="favorites" class="text-xs font-black uppercase">Favoris_Uniquement.exe</label>
-                            </div>
                         </div>
-                        <div class="mt-4 p-2 border-2 border-black border-inset bg-white text-xs font-mono">
-                            Total_Items: {{ filteredList.length }}
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" v-model="showFavorites" class="hidden" />
+                            <div class="w-5 h-5 win-inset flex items-center justify-center text-xs" :class="{'bg-[var(--win-blue)] text-white': showFavorites}">
+                                {{ showFavorites ? 'X' : '' }}
+                            </div>
+                            <span class="text-[10px] font-black uppercase">Favorites_Only</span>
+                        </label>
+
+                        <div class="win-inset bg-black text-[var(--win-green)] p-2 font-mono text-[10px]">
+                            >> MEMORY_COUNT: {{ filteredList.length }} ITEMS_LOADED
                         </div>
                     </div>
                 </div>

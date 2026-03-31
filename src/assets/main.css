@@ -1,23 +1,53 @@
 @import "tailwindcss";
 
+:root {
+    --win-bg: #d3d3d3;
+    --win-face: #c0c0c0;   
+    --win-gray: #808080;  
+    --win-border-light: #ffffff;
+    --win-border-dark: #808080;
+}
+
 body {
-    background-color: #f0f0f0;
+    background-color: var(--win-bg);
     color: #000;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'MS Sans Serif', 'Space Grotesk', sans-serif;
 }
 
-.neo-brutalism {
-    border: 3px solid #000;
-    box-shadow: 5px 5px 0px 0px #000;
-    transition: all 0.2s ease;
+.win-window {
+    background: var(--win-face);
+    border: 2px solid;
+    border-color: var(--win-border-light) #000 #000 var(--win-border-light);
+    padding: 2px;
 }
 
-.neo-brutalism:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0px 0px #000;
+.win-inset {
+    border: 2px solid;
+    border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+    background: white;
 }
 
-.neo-brutalism:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px 0px #000;
+.win-button {
+    background: var(--win-face);
+    border: 2px solid;
+    border-color: var(--win-border-light) #000 #000 var(--win-border-light);
+    padding: 4px 12px;
+    font-weight: bold;
+    font-size: 13px;
+    outline: none;
+}
+
+.win-button:active {
+    border-color: #000 var(--win-border-light) var(--win-border-light) #000;
+    padding: 5px 11px 3px 13px;
+}
+
+.page-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: white;
+    -webkit-text-stroke: 3px black;
+    text-shadow: 6px 6px 0px #808080;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
 }

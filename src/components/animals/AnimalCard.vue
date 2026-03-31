@@ -1,20 +1,32 @@
 <template>
-  <div class="animal-card neo-brutalism bg-yellow-300 relative">
-    <button 
-    @click.stop.prevent="animalStore.toggleFavorite(animal.id)" 
-    class="absolute top-2 right-2 z-10 bg-white border-2 border-black p-1 hover:bg-pink-200 transition-colors">
-    {{ animalStore.isFavorite(animal.id) ? '★' : '☆' }}
-  </button>
-    <div class="p-2">
-        <img :src="animal.image" :alt="animal.name" class="w-full h-48 object-cover border-2 border-black rounded-lg" @error="(e) => e.target.src = 'https://placehold.co/400x400,text=Image+Indisponible'"/>
+  <div class="win-window group h-100%">
+    <div class="bg-gray-600 text-white p-1 text-[11px] flex justify-between items-center px-2">
+      <span class="truncate font-mono">FILE: {{ animal.name.toUpperCase() }}.IMG</span>
+      <span class="cursor-help">?</span>
     </div>
-    <div class="p-4 bg-white border-t-2 border-black">
-        <h2 class="text-2xl font-black italic uppercase italic">{{ animal.name }}</h2>
-        <div class="flex flex-wrap gap-1 mt-2">
-            <span v-for="t in animal.type" :key="t" class="text-[10px] bg-cyan-300 border border-black px-2 py-0.5 font-bold uppercase">
-                {{ t }}
-            </span>
+    
+    <div class="p-2 flex flex-col h-full bg-[var(--win-face)]">
+      <div class="win-inset overflow-hidden mb-3">
+        <img :src="animal.image" class="w-full h-40 object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all" />
+      </div>
+
+      <div class="flex flex-col flex-1">
+        <h2 class="text-xl font-bold uppercase tracking-tight text-black">{{ animal.name }}</h2>
+        
+        <div class="flex gap-2 mt-2 mb-4">
+          <span class="win-inset px-2 py-0.5 text-[9px] font-bold bg-white text-gray-700 italic">
+            {{ animal.type[0] }}
+          </span>
+          <span class="win-inset px-2 py-0.5 text-[9px] font-bold bg-white text-gray-700">
+            {{ animal.breed }}
+          </span>
         </div>
+
+        <button @click.stop.prevent="animalStore.toggleFavorite(animal.id)" 
+                class="win-button w-full mt-auto text-xs">
+          {{ animalStore.isFavorite(animal.id) ? '★ Favori' : '☆ Favori' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>

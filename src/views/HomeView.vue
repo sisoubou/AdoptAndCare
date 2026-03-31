@@ -1,12 +1,11 @@
 <template>
     <div class="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h1 class="text-7xl font-black text-white uppercase tracking-tighter mb-6" 
-            style="-webkit-text-stroke: 3px black; text-shadow: 6px 6px 0px #ff1493;">
+        <h1 class="page-title mb-6">
             Adopte moi !
         </h1>
         
         <router-link to="/animals" 
-            class="neo-brutalism inline-block bg-green-400 text-black font-black py-4 px-10 rounded-none text-2xl uppercase italic">
+            class="win-button inline-block bg-gray-300 text-black font-black py-8 px-20 text-3xl uppercase italic hover:bg-gray-200">
             Trouve ton meilleur ami 🐾
         </router-link>
     </div>

@@ -17,7 +17,9 @@ const newAnimal = ref({
     type: 'Chat', 
     breed: '', 
     description: '', 
-    image: '' 
+    image: '',
+    age: '',
+    gender: ''
 })
 
 onMounted(async () => {
@@ -90,47 +92,72 @@ const handleSubmit = () => {
 
 <template>
   <div class="max-w-3xl mx-auto p-6 mt-10">
-    <div class="neo-brutalism bg-purple-400 p-8">
-        <h1 class="text-4xl font-black uppercase mb-6">Nouveau Compagnon 🐾</h1>
-
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+    <h1 class="page-title mb-6">
+        Nouveau Compagnon
+    </h1>
+    
+    <div class="win-window bg-[var(--win-face)] p-6">
+        <form @submit.prevent="handleSubmit" class="space-y-6 p-4">
             <div class="grid grid-cols-2 gap-4">
-                <input v-model="newAnimal.name" placeholder="Nom" required class="neo-brutalism p-3" />
-                <select v-model="newAnimal.type" class="neo-brutalism p-3 font-bold">
-                    <option value="Chat">Chat 🐱</option>
-                    <option value="Chien">Chien 🐶</option>
-                    <option value="Autre">Autre ✨</option>
-                </select>
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Nom de l'animal</label>
+                    <input v-model="newAnimal.name" placeholder="Felix" required class="win-inset p-3" />
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Type</label>
+                    <select v-model="newAnimal.type" class="win-inset p-3 font-bold">
+                        <option value="Chat">Chat 🐱</option>
+                        <option value="Chien">Chien 🐶</option>
+                        <option value="Autre">Autre ✨</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Âge (ans)</label>
+                    <input v-model.number="newAnimal.age" type="number" min="0" placeholder="2" required class="win-inset p-3" />
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Genre</label>
+                    <select v-model="newAnimal.gender" class="win-inset p-3 font-bold">
+                        <option value="Mâle">Mâle ♂️</option>
+                        <option value="Femelle">Femelle ♀️</option>
+                    </select>
+                </div>
             </div>
 
             <div v-if="newAnimal.type !== 'Autre'" class="flex flex-col gap-1">
-                <label class="font-black uppercase text-xs">Race</label>
-                <select v-model="selectedBreedObject" class="neo-brutalism p-3 bg-white font-bold">
-                <option value="">-- Choisir une race --</option>
-                <option :value="{ name: 'Sans race', id: 'none' }">Sans race / Croisé</option>
-                <option v-for="breed in currentBreedsList" :key="breed.id" :value="{ name: breed.name, id: breed.id }">
-                    {{ breed.name }}
-                </option>
-                <option :value="{ name: 'custom', id: 'custom' }">Autre (Saisie manuelle...)</option>
-            </select>
+                <label class="block text-xs font-black uppercase mb-1">Race</label>
+                <select v-model="selectedBreedObject" class="win-inset p-2 cursor-pointer">
+                    <option :value="{ name: '', id: '' }">-- Sélectionner --</option>
+                    <option :value="{ name: 'Sans race', id: 'none' }">Croisé / Inconnu</option>
+                    <option v-for="breed in currentBreedsList" :key="breed.id" :value="{ name: breed.name, id: breed.id }">
+                        {{ breed.name }}
+                    </option>
+                    <option :value="{ name: 'custom', id: 'custom' }">Saisie Manuelle...</option>
+                </select>
 
                 <input 
-                    v-if="newAnimal.breed === 'custom'"
+                    v-if="selectedBreedObject.id === 'custom'"
                     v-model="customBreed" 
-                    placeholder="Tapez le nom de la race..." 
-                    class="neo-brutalism p-3 mt-2 bg-yellow-100 font-bold" 
+                    placeholder="Entrez la race manuellement..." 
+                    class="win-inset p-2 mt-2" 
                 />
             </div>
 
             <div class="flex flex-col gap-2">
-                <label class="font-black uppercase text-xs">Photo</label>
-                <input type="file" @change="handleFileUpload" accept="image/*" class="neo-brutalism p-2 bg-white" />
+                <label class="block text-xs font-black uppercase">Photo</label>
+                <input type="file" @change="handleFileUpload" accept="image/*" class="win-inset p-2 bg-gray-200" />
                 <img v-if="previewImage" :src="previewImage" class="w-32 h-32 object-cover border-2 border-black mt-2" />
             </div>
 
-            <textarea v-model="newAnimal.description" placeholder="Description..." required class="neo-brutalism w-full p-3 h-32"></textarea>
+            <div class="flex flex-col gap-2">
+                <label class="block text-xs font-black uppercase">Description</label>
+                <textarea v-model="newAnimal.description" placeholder="Décrivez l'animal..." required class="win-inset w-full p-3 h-32"></textarea>
+            </div>
 
-            <button type="submit" class="w-full bg-black text-white font-black py-4 hover:bg-green-400 hover:text-black transition-all">
+            <button type="submit" class="win-button w-full py-4 font-black text-center bg-gray-300 text-black hover:bg-gray-200">
                 PUBLIER L'ANNONCE
             </button>
         </form>

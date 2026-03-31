@@ -17,7 +17,7 @@ watch(localSearchQuery, (newValue) => {
             v-model="localSearchQuery" 
             type="text" 
             placeholder="Taper un nom..." 
-            class="search-input neo-brutalism bg-white w-full p-3 outline-none font-bold"
+            class="search-input win-inset bg-white w-full p-3 outline-none font-bold"
         >
     </div>
 </template>
@@ -27,6 +27,6 @@ watch(localSearchQuery, (newValue) => {
   margin-bottom: 20px;
 }
 .search-input:focus {
-  background-color: #ccff00;
+  background-color: var(--win-face);
 }
 </style>
