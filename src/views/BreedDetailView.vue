@@ -12,7 +12,7 @@ const species = route.params.species
 const API_KEY = 'live_4KTzXfkR38ftodklW2OSwuc5BB2R7SFfE2mOXaIXm8hOOYU6Ip0T0hjqUQ61MXc9';
 
 onMounted(async () => {
-  if (!isNaN(route.params.id.charAt(0))) {
+  if (!isNaN(route.params.id) && route.params.id.length > 10) {
     breed.value = { 
       name: "Race personnalisée", 
       description: "Cette race a été ajoutée manuellement et n'est pas dans l'encyclopédie officielle." 
@@ -22,15 +22,32 @@ onMounted(async () => {
   }
 
   isLoading.value = true
-  const url = species === 'cats' 
-    ? `https://api.thecatapi.com/v1/breeds/${route.params.id}`
-    : `https://api.thedogapi.com/v1/breeds/search?q=${route.params.id}`
   
   try {
-    const res = await axios.get(url, { headers: { 'x-api-key': API_KEY } })
-    breed.value = Array.isArray(res.data) ? res.data[0] : res.data
+    const url = species === 'cats' 
+      ? `https://api.thecatapi.com/v1/breeds/search?q=${route.params.id}`
+      : `https://api.thedogapi.com/v1/breeds/search?q=${route.params.id}`
+    
+    const res = await axios.get(url, { 
+      headers: { 'x-api-key': API_KEY } 
+    })
+
+    if (res.data && res.data.length > 0) {
+        breed.value = res.data[0]
+        
+        if (breed.value.reference_image_id) {
+            breed.value.imageUrl = `https://cdn2.the${species === 'cats' ? 'cat' : 'dog'}api.com/images/${breed.value.reference_image_id}.jpg`
+        }
+    } else {
+        const fallbackUrl = species === 'cats'
+            ? `https://api.thecatapi.com/v1/breeds/${route.params.id}`
+            : `https://api.thedogapi.com/v1/breeds/${route.params.id}`
+        
+        const resFallback = await axios.get(fallbackUrl, { headers: { 'x-api-key': API_KEY } })
+        breed.value = resFallback.data
+    }
   } catch (e) {
-    console.error("Erreur technique:", e)
+    console.error("Erreur technique sur la race:", e)
   } finally {
     isLoading.value = false
   }
@@ -68,10 +85,24 @@ const goBack = () => {
                 <div class="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_#000]">
                     <h3 class="font-black uppercase mb-3 text-lg border-b-2 border-black pb-1">>> SPECIFICATIONS.TXT</h3>
                     <div class="font-mono text-sm space-y-2 font-bold">
-                        <p><span class="text-gray-600">Origin_Location:</span> {{ breed.origin || 'Unknown' }}</p>
-                        <p><span class="text-gray-600">Life_Span_Est:</span> {{ breed.life_span }}</p>
-                        <p v-if="breed.weight?.metric"><span class="text-gray-600">Weight_Metric:</span> {{ breed.weight.metric }} kg</p>
-                        <p v-if="breed.height?.metric"><span class="text-gray-600">Height_Metric:</span> {{ breed.height.metric }} cm</p>
+                        <p><span class="text-gray-600">Origin_Location_:</span> {{ breed.origin || 'Unknown' }}</p>
+                        <p><span class="text-gray-600">Life_Span_</span> {{ breed.life_span }}</p>
+                        <p v-if="breed.weight?.metric"><span class="text-gray-600">Weight_Metric_:</span> {{ breed.weight.metric }} kg</p>
+                        <p v-if="breed.height?.metric"><span class="text-gray-600">Height_Metric_:</span> {{ breed.height.metric }} cm</p>
+                        <p v-if="breed.indoor === 0"><span class="text-gray-600">Indoor_Friendly_:</span> No</p>
+                        <p v-else-if="breed.indoor === 1"><span class="text-gray-600">Indoor_Friendly_:</span> Yes</p>
+                        <p><span class="text-gray-600">Affection_Level_:</span> {{ breed.affection_level || 'Unknown' }}</p>
+                        <p><span class="text-gray-600">Intelligence_Level_:</span> {{ breed.intelligence || 'Unknown' }}</p>
+                        <p><span class="text-gray-600">Energy_Level_:</span> {{ breed.energy_level || 'Unknown' }}</p>
+                        <p v-if="breed.dog_friendly !== undefined"><span class="text-gray-600">Dog_Friendly_:</span> {{ breed.dog_friendly ? 'Yes' : 'No' }}</p>
+                        <p v-if="breed.cat_friendly !== undefined"><span class="text-gray-600">Cat_Friendly_:</span> {{ breed.cat_friendly ? 'Yes' : 'No' }}</p>
+                        <p v-if="breed.social_needs !== undefined"><span class="text-gray-600">Social_Needs_:</span> {{ breed.social_needs ? 'High' : 'Low' }}</p>
+                        <p v-if="breed.stranger_friendly !== undefined"><span class="text-gray-600">Stranger_Friendly_:</span> {{ breed.stranger_friendly ? 'Yes' : 'No' }}</p>
+                        <p><span class="text-gray-600">Child_Friendly_:</span> {{ breed.child_friendly !== undefined ? (breed.child_friendly ? 'Yes' : 'No') : 'Unknown' }}</p>
+                        <p v-if="breed.rare === 0"><span class="text-gray-600">Rarity_:</span> Yes </p>
+                        <p v-else-if="breed.rare === 1"><span class="text-gray-600">Rarity_:</span> No</p>
+                        <p v-if="breed.hypoallergenic === 0"><span class="text-gray-600">Hypoallergenic_:</span> No</p>
+                        <p v-else-if="breed.hypoallergenic === 1"><span class="text-gray-600">Hypoallergenic_:</span> Yes</p>
                     </div>
                 </div>
 

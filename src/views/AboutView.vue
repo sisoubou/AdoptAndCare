@@ -59,7 +59,6 @@ const filteredBreeds = computed(() => {
     <div class="relative mb-12">
       <input v-model="searchQuery" placeholder="Rechercher une race dans la base de données..." 
         class="neo-brutalism w-full p-6 text-2xl bg-white outline-none focus:bg-cyan-100" />
-      <span class="absolute right-6 top-6 text-2xl">敵</span>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -81,7 +80,6 @@ const filteredBreeds = computed(() => {
           </p>
           <div class="mt-6 flex justify-between items-center border-t-2 border-black pt-4">
             <span class="text-xs font-black underline">VOIR FICHE.EXE</span>
-            <span class="text-xl">棲</span>
           </div>
         </div>
       </router-link>

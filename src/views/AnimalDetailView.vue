@@ -68,7 +68,7 @@ onMounted(async () => {
                         name: 'breed-detail', 
                         params: { 
                         species: animal.type[0].toLowerCase().includes('chat') ? 'cats' : 'dogs', 
-                        id: animal.id.includes('-') ? animal.id.split('-')[1] : animal.id
+                        id: animal.breedId
                         } 
                     }" 
                     class="inline-block bg-pink-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit"
