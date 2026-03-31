@@ -94,9 +94,17 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-else class="text-center py-20 font-black text-2xl uppercase italic">
-    Chargement...
-  </div>
+  <div v-if="animalStore.isLoading" class="flex flex-col items-center justify-center py-20">
+    <div class="win98-window p-1 w-64">
+        <div class="bg-[#000080] text-white px-2 py-1 text-xs font-bold uppercase">Installation_Data.sys</div>
+        <div class="p-4 bg-[#c0c0c0]">
+            <p class="text-xs font-bold mb-2 uppercase">Téléchargement des animaux...</p>
+            <div class="border-inset bg-white h-6 flex p-1">
+                <div class="bg-[#000080] h-full animate-pulse" style="width: 60%"></div>
+            </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <style scoped>

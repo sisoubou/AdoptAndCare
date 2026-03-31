@@ -6,7 +6,7 @@ export const useAnimalsStore = defineStore('animals', () => {
     const listAnimals = ref(JSON.parse(localStorage.getItem('my_animals')) || [])
     const favoriteAnimals = ref(JSON.parse(localStorage.getItem('my_favorites')) || [])
     const isLoading = ref(false)
-x
+
     const fetchAnimals = async () => {
     if (listAnimals.value.some(a => a.id.startsWith('cat-') || a.id.startsWith('dog-'))) return;
     
