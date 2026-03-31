@@ -20,14 +20,16 @@ const handleSearch = (query) => {
 }
 
 const availableTypes = computed(() => {
-    const types = animalStore.listAnimals.map(a => a.type[0])
+    const types = animalStore.listAnimals
+      .map(a => Array.isArray(a.type) ? a.type[0] : a.type)
+      .filter(type => type)
     return ['all', ...new Set(types)]
 })
 
 const filteredList = computed(() => {
   return animalStore.listAnimals.filter(animal => {
     const matchesSearch = animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesType = selectedType.value === 'all' || animal.type[0] === selectedType.value
+    const matchesType = selectedType.value === 'all' || animal.type === selectedType.value
     const matchesFavorite = !showFavorites.value || animalStore.isFavorite(animal.id)
     return matchesSearch && matchesType && matchesFavorite
   })

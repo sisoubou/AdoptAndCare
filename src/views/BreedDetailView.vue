@@ -1,12 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAnimalsStore } from '@/stores/animals.store'
 import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
-const animalStore = useAnimalsStore()
 const breed = ref(null)
 const isLoading = ref(true)
 const species = route.params.species 
@@ -14,72 +12,49 @@ const species = route.params.species
 onMounted(async () => {
   isLoading.value = true
   
-  // First, try to find the breed in the store
-  const breedFromStore = animalStore.listAnimals.find(a => 
-    a.breedId === route.params.id && 
-    ((species === 'cats' && a.type === 'Chat') || (species === 'dogs' && a.type === 'Chien'))
-  )
-  
-  if (breedFromStore) {
-    breed.value = {
-      name: breedFromStore.breed,
-      description: breedFromStore.description,
-      imageUrl: breedFromStore.image,
-      temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
-    }
-    isLoading.value = false
-    return
-  }
-
-  // If not in store, try custom breed check
-  if (!isNaN(route.params.id) && route.params.id.length > 10) {
-    breed.value = { 
-      name: "Race personnalisée", 
-      description: "Cette race a été ajoutée manuellement et n'est pas dans l'encyclopédie officielle.",
-      imageUrl: 'https://placehold.co/400x400?text=Race+Personnalisée'
-    }
-    isLoading.value = false
-    return
-  }
-
-  // If not found and store is empty, fetch from API with better error handling
-  if (animalStore.listAnimals.length === 0) {
-    await animalStore.fetchAnimals()
-    const breedFromStoreRetry = animalStore.listAnimals.find(a => 
-      a.breedId === route.params.id && 
-      ((species === 'cats' && a.type === 'Chat') || (species === 'dogs' && a.type === 'Chien'))
-    )
-    
-    if (breedFromStoreRetry) {
-      breed.value = {
-        name: breedFromStoreRetry.breed,
-        description: breedFromStoreRetry.description,
-        imageUrl: breedFromStoreRetry.image,
-        temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
+  try {
+    const url = species === 'cats' 
+      ? 'https://api.thecatapi.com/v1/breeds' 
+      : 'https://api.thedogapi.com/v1/breeds'
+      
+    const response = await axios.get(url, {
+      headers: {
+        'x-api-key': 'live_4KTzXfkR38ftodklW2OSwuc5BB2R7SFfE2mOXaIXm8hOOYU6Ip0T0hjqUQ61MXc9'
       }
-      isLoading.value = false
-      return
+    })
+    
+    const fullBreed = response.data.find(b => b.id.toString() === route.params.id.toString())
+    
+    if (fullBreed) {
+      breed.value = {
+        ...fullBreed,
+        imageUrl: fullBreed.image?.url || `https://cdn2.the${species === 'cats' ? 'cat' : 'dog'}api.com/images/${fullBreed.reference_image_id}.jpg`
+      }
+    } else {
+      breed.value = { 
+        name: route.params.id?.length > 10 ? "Race personnalisée" : "Race inconnue", 
+        description: "Cette race n'est pas dans l'encyclopédie officielle.",
+        imageUrl: 'https://placehold.co/400x400?text=Indisponible',
+        temperament: 'Inconnu'
+      }
     }
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la race :", error)
+  } finally {
+    isLoading.value = false
   }
+})
 
-  // Fallback: use placeholder if nothing found
-  breed.value = {
-    name: route.params.id || 'Race inconnue',
-    description: 'Informations non disponibles',
-    imageUrl: 'https://placehold.co/400x400?text=Image+Indisponible',
-    temperament: 'Race de ' + (species === 'cats' ? 'chat' : 'chien')
-  }
 const goBack = () => {
     router.back()
 }
-
 </script>
 
 <template>
   <div v-if="breed" class="max-w-7xl mx-auto my-10 px-4">
     <div class="win98-window">
         <div class="win98-title-bar">
-            <span class="font-bold truncate">C:\WIKI\{{ breed.name.toUpperCase() }}.HTM</span>
+            <span class="font-bold truncate">C:\WIKI\{{ breed.name?.toUpperCase() }}.HTM</span>
             <div class="flex gap-1">
                 <button @click="goBack" class="win98-btn-tool">?</button>
                 <button @click="goBack" class="win98-btn-tool">X</button>
@@ -90,7 +65,7 @@ const goBack = () => {
             <div class="md:w-1/2 bg-[var(--win-face)] p-4 border-inset flex justify-center">
                 <img :src="breed.imageUrl" 
                      :alt="breed.name" 
-                     class="w-auto h-auto border-2 border-black shadow-[4px_4px_0px_#000]"
+                     class="w-auto h-auto max-h-96 border-2 border-black shadow-[4px_4px_0px_#000]"
                      @error="(e) => e.target.src = 'https://placehold.co/400x400?text=Image+Indisponible'" />
             </div>
 
@@ -102,28 +77,31 @@ const goBack = () => {
                 <div class="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_#000] max-w-md">
                     <h3 class="font-black uppercase mb-3 text-lg border-b-2 border-black pb-1">>> SPECIFICATIONS.TXT</h3>
                     <div class="font-mono text-sm space-y-2 font-bold">
+                        
                         <p><span class="text-gray-600">Origin_Location_:</span> {{ breed.origin || 'Unknown' }}</p>
-                        <p><span class="text-gray-600">Life_Span_</span> {{ breed.life_span }}</p>
+                        <p><span class="text-gray-600">Life_Span_:</span> {{ breed.life_span || 'Unknown' }}</p>
                         <p v-if="breed.weight?.metric"><span class="text-gray-600">Weight_Metric_:</span> {{ breed.weight.metric }} kg</p>
-                        <p v-if="breed.height?.metric"><span class="text-gray-600">Height_Metric_:</span> {{ breed.height.metric }} cm</p>
-                        <p v-if="breed.indoor === 0"><span class="text-gray-600">Indoor_Friendly_:</span> No</p>
-                        <p v-else-if="breed.indoor === 1"><span class="text-gray-600">Indoor_Friendly_:</span> Yes</p>
-                        <p><span class="text-gray-600">Affection_Level_:</span> {{ breed.affection_level || 'Unknown' }}</p>
-                        <p><span class="text-gray-600">Intelligence_Level_:</span> {{ breed.intelligence || 'Unknown' }}</p>
-                        <p><span class="text-gray-600">Energy_Level_:</span> {{ breed.energy_level || 'Unknown' }}</p>
-                        <p v-if="breed.dog_friendly !== undefined"><span class="text-gray-600">Dog_Friendly_:</span> {{ breed.dog_friendly ? 'Yes' : 'No' }}</p>
-                        <p v-if="breed.cat_friendly !== undefined"><span class="text-gray-600">Cat_Friendly_:</span> {{ breed.cat_friendly ? 'Yes' : 'No' }}</p>
-                        <p v-if="breed.social_needs !== undefined"><span class="text-gray-600">Social_Needs_:</span> {{ breed.social_needs ? 'High' : 'Low' }}</p>
-                        <p v-if="breed.stranger_friendly !== undefined"><span class="text-gray-600">Stranger_Friendly_:</span> {{ breed.stranger_friendly ? 'Yes' : 'No' }}</p>
-                        <p><span class="text-gray-600">Child_Friendly_:</span> {{ breed.child_friendly !== undefined ? (breed.child_friendly ? 'Yes' : 'No') : 'Unknown' }}</p>
-                        <p v-if="breed.rare === 0"><span class="text-gray-600">Rarity_:</span> Yes </p>
-                        <p v-else-if="breed.rare === 1"><span class="text-gray-600">Rarity_:</span> No</p>
-                        <p v-if="breed.hypoallergenic === 0"><span class="text-gray-600">Hypoallergenic_:</span> No</p>
-                        <p v-else-if="breed.hypoallergenic === 1"><span class="text-gray-600">Hypoallergenic_:</span> Yes</p>
+                        
+                        <template v-if="species === 'dogs'">
+                            <p v-if="breed.height?.metric"><span class="text-gray-600">Height_Metric_:</span> {{ breed.height.metric }} cm</p>
+                            <p v-if="breed.breed_group"><span class="text-gray-600">Breed_Group_:</span> {{ breed.breed_group }}</p>
+                            <p v-if="breed.bred_for"><span class="text-gray-600">Bred_For_:</span> {{ breed.bred_for }}</p>
+                        </template>
+
+                        <template v-if="species === 'cats'">
+                            <p v-if="breed.indoor !== undefined"><span class="text-gray-600">Indoor_Friendly_:</span> {{ breed.indoor ? 'Yes' : 'No' }}</p>
+                            <p v-if="breed.affection_level"><span class="text-gray-600">Affection_Level_:</span> {{ breed.affection_level }}/5</p>
+                            <p v-if="breed.intelligence"><span class="text-gray-600">Intelligence_Level_:</span> {{ breed.intelligence }}/5</p>
+                            <p v-if="breed.energy_level"><span class="text-gray-600">Energy_Level_:</span> {{ breed.energy_level }}/5</p>
+                            <p v-if="breed.dog_friendly"><span class="text-gray-600">Dog_Friendly_:</span> {{ breed.dog_friendly }}/5</p>
+                            <p v-if="breed.child_friendly"><span class="text-gray-600">Child_Friendly_:</span> {{ breed.child_friendly }}/5</p>
+                            <p v-if="breed.hypoallergenic !== undefined"><span class="text-gray-600">Hypoallergenic_:</span> {{ breed.hypoallergenic ? 'Yes' : 'No' }}</p>
+                        </template>
+
                     </div>
                 </div>
 
-                <div class="bg-pink-300 border-2 border-black p-4 font-black uppercase text-xs shadow-[4px_4px_0px_#000]">
+                <div v-if="breed.temperament" class="bg-pink-300 border-2 border-black p-4 font-black uppercase text-xs shadow-[4px_4px_0px_#000]">
                     Tempérament: {{ breed.temperament }}
                 </div>
             </div>
@@ -131,7 +109,7 @@ const goBack = () => {
         
         <div class="p-6 bg-[#c0c0c0] border-t-2 border-black">
             <div class="bg-white border-inset p-4 font-mono text-sm font-bold leading-relaxed">
-                {{ breed.description || breed.history || 'Aucune description détaillée n\'est disponible pour cette race dans la base de données.' }}
+                {{ breed.description || breed.bred_for || breed.temperament || 'Aucune description détaillée n\'est disponible pour cette race.' }}
             </div>
             
             <button @click="goBack" class="mt-6 w-full y2k-btn-blue">

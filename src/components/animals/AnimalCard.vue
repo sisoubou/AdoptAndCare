@@ -7,7 +7,10 @@
     
     <div class="p-2 flex flex-col h-full bg-[var(--win-face)]">
       <div class="win-inset overflow-hidden mb-3">
-        <img :src="animal.image" class="w-full h-40 object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all" />
+        <div v-if="imageLoadError || !animal.image" class="w-full h-40 bg-gray-300 flex items-center justify-center">
+          <span class="text-center text-sm font-bold text-gray-600">Image indisponible</span>
+        </div>
+        <img v-else :src="animal.image" @error="onImageError" class="w-full h-40 object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all" />
       </div>
 
       <div class="flex flex-col flex-1">
@@ -15,7 +18,7 @@
         
         <div class="flex gap-2 mt-2 mb-4">
           <span class="win-inset px-2 py-0.5 text-[9px] font-bold bg-white text-gray-700 italic">
-            {{ animal.type[0] }}
+            {{ animal.type }}
           </span>
           <span class="win-inset px-2 py-0.5 text-[9px] font-bold bg-white text-gray-700">
             {{ animal.breed }}
@@ -41,10 +44,11 @@
 </style>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useAnimalsStore } from '@/stores/animals.store'
 
 const animalStore = useAnimalsStore()
+const imageLoadError = ref(false)
 
 const props = defineProps({
   animal: {
@@ -60,4 +64,8 @@ const displayTypes = computed(() => {
 const typeClass = computed(() => {
     return 'default-type'
 })
+
+const onImageError = () => {
+  imageLoadError.value = true
+}
 </script>

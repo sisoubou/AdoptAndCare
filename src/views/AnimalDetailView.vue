@@ -7,6 +7,7 @@ import axios from 'axios';
 const route = useRoute()
 const router = useRouter()
 const animalStore = useAnimalsStore()
+const imageLoadError = ref(false)
 
 const animal = computed(() =>{
     return animalStore.listAnimals.find(a => a.id.toString() === route.params.id.toString())
@@ -23,6 +24,10 @@ const contactError = ref('')
 
 const goBack = () => {
     router.push('/animals')
+}
+
+const onImageError = () => {
+    imageLoadError.value = true
 }
 
 const deleteAnimal = () => {
@@ -79,7 +84,10 @@ onMounted(async () => {
 
         <div class="p-6 flex flex-col md:flex-row gap-8 bg-[#c0c0c0]">
             <div class="md:w-1/2 bg-[var(--win-face)] p-4 border-inset flex justify-center">
-                <img :src="animal.image" alt="Photo de {{ animal.name }}" class="w-auto h-auto border-2 border-black shadow-[4px_4px_0px_#000]" />
+                <div v-if="imageLoadError || !animal.image" class="w-full h-96 bg-gray-300 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_#000]">
+                    <span class="text-center text-lg font-bold text-gray-600">Image indisponible</span>
+                </div>
+                <img v-else :src="animal.image" @error="onImageError" alt="Photo de {{ animal.name }}" class="w-auto h-auto border-2 border-black shadow-[4px_4px_0px_#000]" />
             </div>
 
             <div class="md:w-1/2 flex flex-col gap-4">
