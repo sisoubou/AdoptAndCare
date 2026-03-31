@@ -7,13 +7,13 @@ export const useAnimalsStore = defineStore('animals', () => {
     const isLoading = ref(false)
 
     const fetchAnimals = async () => {
-    if (listAnimals.value.length > 0 && listAnimals.value.some(a => a.id.includes('cat-'))) return;
+    if (listAnimals.value.some(a => a.id.startsWith('cat-') || a.id.startsWith('dog-'))) return;
     
     isLoading.value = true
     try {
         const [catRes, dogRes] = await Promise.all([
-            axios.get('https://api.thecatapi.com/v1/breeds?limit=10'),
-            axios.get('https://api.thedogapi.com/v1/breeds?limit=10')
+            axios.get('https://api.thecatapi.com/v1/breeds'),
+            axios.get('https://api.thedogapi.com/v1/breeds')
         ])
 
         const formatted = [
@@ -22,14 +22,18 @@ export const useAnimalsStore = defineStore('animals', () => {
                 name: d.name,
                 type: ['Chat'],
                 description: d.description,
-                image: d.image?.url || 'https://placehold.co/400x400?text=Chat'
+                image: d.image?.url || 'https://placehold.co/400x400?text=Chat',
+                breed: d.name,
+                breedId: d.id
             })),
             ...dogRes.data.map(d => ({
                 id: 'dog-' + d.id,
                 name: d.name,
                 type: ['Chien'],
                 description: d.temperament,
-                image: d.image?.url || 'https://placehold.co/400x400?text=Chien'
+                image: d.image?.url || 'https://placehold.co/400x400?text=Chien',
+                breed: d.name,
+                breedId: d.id
             }))
         ]
         listAnimals.value = [...listAnimals.value, ...formatted]

@@ -26,7 +26,7 @@ const availableTypes = computed(() => {
 const filteredList = computed(() => {
   return animalStore.listAnimals.filter(animal => {
     const matchesSearch = animal.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesType = selectedType.value === 'all' || animal.type === selectedType.value
+    const matchesType = selectedType.value === 'all' || animal.type[0] === selectedType.value
     return matchesSearch && matchesType
   })
 })

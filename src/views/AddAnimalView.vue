@@ -98,7 +98,7 @@ const handleSubmit = () => {
             </div>
 
             <div v-if="newAnimal.type !== 'Autre'" class="flex flex-col gap-1">
-                <label class="font-black uppercase text-xs">Race (Base de données API)</label>
+                <label class="font-black uppercase text-xs">Race</label>
                 <select v-model="selectedBreedObject" class="neo-brutalism p-3 bg-white font-bold">
                 <option value="">-- Choisir une race --</option>
                 <option :value="{ name: 'Sans race', id: 'none' }">Sans race / Croisé</option>
@@ -106,7 +106,7 @@ const handleSubmit = () => {
                     {{ breed.name }}
                 </option>
                 <option :value="{ name: 'custom', id: 'custom' }">Autre (Saisie manuelle...)</option>
-            </select>>
+            </select>
 
                 <input 
                     v-if="newAnimal.breed === 'custom'"
@@ -117,7 +117,7 @@ const handleSubmit = () => {
             </div>
 
             <div class="flex flex-col gap-2">
-                <label class="font-black uppercase text-xs">Photo (Fichier local)</label>
+                <label class="font-black uppercase text-xs">Photo</label>
                 <input type="file" @change="handleFileUpload" accept="image/*" class="neo-brutalism p-2 bg-white" />
                 <img v-if="previewImage" :src="previewImage" class="w-32 h-32 object-cover border-2 border-black mt-2" />
             </div>
