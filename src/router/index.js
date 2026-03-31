@@ -9,6 +9,7 @@ const routes = [
     ]},
     {path: '/add-animal', name: 'add-animal', component: () => import('@/views/AddAnimalView.vue')},
     {path: '/about', name: 'about', component: () => import('@/views/AboutView.vue')},
+    {path: '/breed/:species/:id', name: 'breed-detail', component: () => import('@/views/BreedDetailView.vue')},
     {path: '/:pathMatch(.*)*', name: 'not-found', component: { template: '<p>Page non trouvé !<p>'}},
 ]
 

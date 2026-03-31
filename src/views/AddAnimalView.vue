@@ -41,9 +41,7 @@ const handleSubmit = () => {
                     <option value="Autre">Autre ✨</option>
                 </select>
             </div>
-            <div class="grid grid-cols-1 gap-4">
-                <input v-model="newAnimal.name" placeholder="Nom" required class="neo-brutalism p-3" />
-                
+            <div class="grid grid-cols-1 gap-4">                
                 <div class="flex flex-col gap-1">
                     <input v-model="newAnimal.breed" placeholder="Race (ex: Golden Retriever)" class="neo-brutalism p-3" />
                     <label class="flex items-center gap-2 text-xs font-bold mt-1">

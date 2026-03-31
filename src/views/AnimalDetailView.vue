@@ -62,9 +62,19 @@ onMounted(async () => {
                     <span class="inline-block bg-cyan-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit">
                         Type: {{ animal.type[0] }}
                     </span>
-                    <span class="inline-block bg-yellow-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit">
-                        Breed: {{ animal.breed || 'Inconnu' }}
-                    </span>                    
+                    <router-link 
+                    v-if="animal.breed && animal.breed !== 'Sans race'" 
+                    :to="{ 
+                        name: 'breed-detail', 
+                        params: { 
+                        species: animal.type[0].toLowerCase().includes('chat') ? 'cats' : 'dogs', 
+                        id: animal.id.includes('-') ? animal.id.split('-')[1] : animal.id
+                        } 
+                    }" 
+                    class="inline-block bg-pink-300 border-2 border-black px-4 py-1 font-bold uppercase w-fit"
+                    >
+                    {{ animal.breed }}
+                    </router-link>
                     <button class="adopt-btn-y2k">
                         ADOPTER MAINTENANT !
                     </button>
