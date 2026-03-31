@@ -7,7 +7,7 @@ const route = useRoute()
 const animalStore = useAnimalsStore()
 
 const animal = computed(() => {
-  return animalStore.listAnimals.find(a => a.id === route.params.id)
+  return animalStore.listAnimals.find(a => a.id === route.params.id.toString())
 })
 </script>
 

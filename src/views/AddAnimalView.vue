@@ -65,12 +65,18 @@ const handleFileUpload = (event) => {
 const selectedBreedObject = ref({ name: '', id: '' })
 
 const handleSubmit = () => {
-  let finalBreedName = selectedBreedObject.value.name
-  let finalBreedId = selectedBreedObject.value.id
+  let finalBreedName = ""
+  let finalBreedId = ""
 
-  if (finalBreedId === 'custom') {
-    finalBreedName = customBreed.value
+  if (selectedBreedObject.value.id === 'custom') {
+    finalBreedName = customBreed.value || 'Race Inconnue'
     finalBreedId = 'custom-' + Date.now()
+  } else if (selectedBreedObject.value.id === 'none') {
+    finalBreedName = 'Sans race'
+    finalBreedId = 'none'
+  } else {
+    finalBreedName = selectedBreedObject.value.name
+    finalBreedId = selectedBreedObject.value.id
   }
 
   animalStore.addAnimal({

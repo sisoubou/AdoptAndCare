@@ -52,5 +52,11 @@ export const useAnimalsStore = defineStore('animals', () => {
     localStorage.setItem('my_animals', JSON.stringify(listAnimals.value.filter(a => a.id.startsWith('custom-'))))
   }
 
-  return { listAnimals, isLoading, fetchAnimals, addAnimal }
+  const removeAnimal = (id) => {
+    listAnimals.value = listAnimals.value.filter(a => a.id !== id)
+    const customAnimals = listAnimals.value.filter(a => a.id.startsWith('custom-'))
+    localStorage.setItem('my_animals', JSON.stringify(customAnimals))
+  }
+
+  return { listAnimals, isLoading, fetchAnimals, addAnimal, removeAnimal }
 })

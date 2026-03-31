@@ -8,11 +8,18 @@ const router = useRouter()
 const animalStore = useAnimalsStore()
 
 const animal = computed(() =>{
-    return animalStore.listAnimals.find(a => a.id == route.params.id)
+    return animalStore.listAnimals.find(a => a.id.toString() === route.params.id.toString())
 })
 
 const goBack = () => {
     router.push('/animals')
+}
+
+const deleteAnimal = () => {
+    if (confirm("Êtes-vous sûr de vouloir supprimer cet animal ?")) {
+        animalStore.removeAnimal(animal.value.id)
+        router.push('/animals')
+    }
 }
 
 onMounted(async () => {
@@ -35,7 +42,7 @@ onMounted(async () => {
 
         <div class="p-6 flex flex-col md:flex-row gap-8 bg-[#c0c0c0]">
             <div class="md:w-1/2 bg-purple-500 p-4 border-inset">
-                <img :src="animal.image" :alt="animal.name" class="w-full h-[400px] object-cover border-2 border-black shadow-[4px_4px_0px_#000]" />
+                <img :src="animal.image" :alt="animal.name" class="w-full h-[400px] object-cover border-2 border-black shadow-[4px_4px_0px_#000]" @error="(e) => e.target.src = 'https://placehold.co/400x400?text=Image+Indisponible'"/>
             </div>
 
             <div class="md:w-1/2 flex flex-col">
@@ -77,6 +84,9 @@ onMounted(async () => {
                     </router-link>
                     <button class="adopt-btn-y2k">
                         ADOPTER MAINTENANT !
+                    </button>
+                    <button @click="deleteAnimal" class="adopt-btn-y2k bg-red-600 shadow-[5px_5px_0px_#8b0000] hover:shadow-[7px_7px_0px_#8b0000] active:shadow-[2px_2px_0px_#8b0000]">
+                        SUPPRIMER ANIMAL
                     </button>
                 </div>
             </div>

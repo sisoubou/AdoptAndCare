@@ -1,7 +1,7 @@
 <template>
   <div class="animal-card neo-brutalism bg-yellow-300">
     <div class="p-2">
-        <img :src="animal.image" :alt="animal.name" class="w-full h-48 object-cover border-2 border-black rounded-lg" />
+        <img :src="animal.image" :alt="animal.name" class="w-full h-48 object-cover border-2 border-black rounded-lg" @error="(e) => e.target.src = 'https://placefold.co/400x400,text=Image+Indisponible'"/>
     </div>
     <div class="p-4 bg-white border-t-2 border-black">
         <h2 class="text-2xl font-black italic uppercase italic">{{ animal.name }}</h2>
